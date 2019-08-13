@@ -31,6 +31,10 @@
                     <label for="name">What is your name?</label>
                     <input type="text" id="name" class="form-control" placeholder="Your name here...">
                 </div>
+                <div class="form-group">
+                    <label for="message">Your message:</label>
+                    <input type="text" id="message" class="form-control" placeholder="Send a message!">
+                </div>
                 <button id="send" class="btn btn-default" type="submit">Send</button>
             </form>
         </div>
@@ -72,7 +76,7 @@
             setConnected(true);
             console.log('Connected: ' + frame);
             stompClient.subscribe('/topic/greetings', function (greeting) {
-                showGreeting(JSON.parse(greeting.body).content);
+                showGreeting(JSON.parse(greeting.body).name, JSON.parse(greeting.body).content);
             });
         });
     }
@@ -86,11 +90,17 @@
     }
 
     function sendName() {
-        stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
+        // stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val()}));
+        stompClient.send("/app/hello", {}, JSON.stringify({'name': $("#name").val(), 'content': $("#message").val()}));
     }
 
-    function showGreeting(message) {
-        $("#greetings").append("<tr><td>" + message + "</td></tr>");
+    function sendMessage() {
+        stompClient.send("/app/hello", {}, JSON.stringify({'message': $("#message").val()}));
+    }
+
+    function showGreeting(name, message) {
+        my_message = name + " says: " + message
+        $("#greetings").append("<tr><td>" + my_message + "</td></tr>");
     }
 
     $(function () {
